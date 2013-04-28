@@ -8,6 +8,7 @@ class DaoMaker
     tablename.split("_").map {|word| word.capitalize }.join("")
   end
 
+  #only head char downcase 
   def top_char_downcase(field)
     check_str = field.split("_").map {|word| word.capitalize }.join("")
     head_str = check_str[0].downcase 
@@ -35,6 +36,8 @@ class DaoMaker
 #import "{tablename}Dto.h"
 
 @interface {tablename}Dao : NSObject
+-(NSMutableArray *)findAll;
+-(BOOL)insert:({tablename}Dto *)dto;
 
 @end
 EOS
@@ -65,9 +68,7 @@ EOS
 #import "{tablename}Dto.h"
 
 @implementation {tablename}Dao
-
-@implementation FriendListsDao
-- (NSMutableArray *)getFriendLists {
+- (NSMutableArray *)findAll {
     FMDatabase *db = [AdamsDbUtil getDatabase];
     [db open];
     FMResultSet *rs;
