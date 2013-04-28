@@ -1,5 +1,5 @@
 # Discription
-It's make Daofile & Dtofile for ObjectiveC from DDL.
+It's make Daofile & Dtofile for ObjectiveC from DDL(sqlite).
 
 
 
