@@ -16,9 +16,11 @@ class DaoMaker
     result = head_str + check_str
   end  
 
-  def make_dao(tablename,entity) 
+  def make_dao(tablename,entity)
+    @orginal_tablename = tablename 
     @tablename = camerize(tablename)
     @entity = entity
+    @entity_count = entity.length - 1
     make_header
     make_main
   end
@@ -98,7 +100,7 @@ EOS
     FMDatabase *db = [AdamsDbUtil getDatabase];
     [db open];
 
-    NSString *query = @"INSERT INTO {tablename}("
+    NSString *query = @"INSERT INTO {orginal_tablename}("
       {insert_property}
     ")";
 
@@ -143,7 +145,7 @@ EOS
     end
 
     select_sql_text = select_sql_text +"\r\n" + "    \"FROM \""+"\r\n"
-    select_sql_text = select_sql_text + "    \""+@tablename+"\"\r\n"
+    select_sql_text = select_sql_text + "    \""+@orginal_tablename+"\"\r\n"
     select_sql_text = select_sql_text + "    \"ORDER BY \"\r\n"
     select_sql_text = select_sql_text + "    \""+order_column+"\""
 
@@ -184,14 +186,23 @@ EOS
     @entity.each_with_index do |column_name,count|
       key = column_name[0]
 
+
       if (key == "ASYNC_DATETIME") or (key == "CREATE_DATETIME") or (key == "UPDATE_DATETIME")
-        insert_property_text = insert_property_text + "\r\n"+ "    \"  datetime\(\'now\', \'localtime\'\),\""
+        if @entity_count == count 
+          insert_property_text = insert_property_text + "\r\n"+ "    \"  datetime\(\'now\', \'localtime\'\)\""
+        else 
+          insert_property_text = insert_property_text + "\r\n"+ "    \"  datetime\(\'now\', \'localtime\'\),\""
+        end
       else
         #bad compair way
         if insert_property_text == ""
-          insert_property_text = insert_property_text +        +"    \"  ?,\""
+          insert_property_text = insert_property_text +        +  "    \"  ?,\""
         else
-          insert_property_text = insert_property_text + "\r\n" +  "    \"  ?,\""
+          if @entity_count == count
+            insert_property_text = insert_property_text + "\r\n" +  "    \"  ?\""
+          else
+            insert_property_text = insert_property_text + "\r\n" +  "    \"  ?,\""
+          end
         end
       end
 
@@ -212,7 +223,7 @@ EOS
 
 
 
-
+    template.gsub!("{orginal_tablename}", @orginal_tablename)
     template.gsub!("{select_sql}", select_sql_text)
     template.gsub!("{select_to_dto}", select_to_dto_text)
     template.gsub!("\{datetime\}", Time.now.to_s)
