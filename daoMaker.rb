@@ -107,7 +107,7 @@ EOS
     db.traceExecution = YES;
     @try {
         if (![db executeUpdate:query,
-          {insert_sql}
+          {insert_sql}]) {
             NSLog(@"ERROR: %d: %@",[db lastErrorCode],[db lastErrorMessage]);
             return NO;
         } else {
@@ -137,14 +137,16 @@ EOS
       end
 
       if select_sql_text == ""
-        select_sql_text = select_sql_text+          "\""+key+"\""
+        select_sql_text = select_sql_text+          "\""+key
       else
-        select_sql_text = select_sql_text+", \r\n    \""+key+"\""
+        select_sql_text = select_sql_text+", \" \r\n    \""+key
       end
 
     end
 
-    select_sql_text = select_sql_text +"\r\n" + "    \"FROM \""+"\r\n"
+    select_sql_text = select_sql_text + "\" "
+
+    select_sql_text = select_sql_text + "\r\n" + "    \"FROM \""+"\r\n"
     select_sql_text = select_sql_text + "    \""+@orginal_tablename+"\"\r\n"
     select_sql_text = select_sql_text + "    \"ORDER BY \"\r\n"
     select_sql_text = select_sql_text + "    \""+order_column+"\""
@@ -158,9 +160,9 @@ EOS
 
       type = column_name[1]
       if type == "TEXT"
-        select_to_dto_text = select_to_dto_text + "            dto."+downkey+" = [rs stringForColumn:@\""+key+"\"]);"+"\r\n"
+        select_to_dto_text = select_to_dto_text + "            dto."+downkey+" = [rs stringForColumn:@\""+key+"\"];"+"\r\n"
       else
-        select_to_dto_text = select_to_dto_text + "            dto."+downkey+" = [rs intForColumn:@\""+key+"\"]);"+"\r\n"
+        select_to_dto_text = select_to_dto_text + "            dto."+downkey+" = [rs intForColumn:@\""+key+"\"];"+"\r\n"
       end
     end
 

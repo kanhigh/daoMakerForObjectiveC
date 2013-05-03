@@ -9,6 +9,15 @@ class DtoMaker
     tablename.split("_").map {|word| word.capitalize }.join("")
   end
 
+  #only head char downcase 
+  def top_char_downcase(field)
+    check_str = field.split("_").map {|word| word.capitalize }.join("")
+    head_str = check_str[0].downcase 
+    check_str.slice!(0)
+    result = head_str + check_str
+  end  
+
+
   # this is make dto : .h and .m 
   def make_dto(tablename,entity) 
     @tablename = camerize(tablename)
@@ -39,12 +48,13 @@ EOS
     property_text = ""
     @entity.each do |column_name|
       key  = column_name[0]
+      downkey = top_char_downcase(key)
       type =  column_name[1]
       
       if type == "TEXT"
-        property_text = property_text + "@property (nonatomic, copy) NSString *"+ key +";\r\n"
+        property_text = property_text + "@property (nonatomic, copy) NSString *"+ downkey +";\r\n"
       elsif type == "INTEGER"
-        property_text = property_text + "@property (nonatomic) int "+ key +";\r\n"
+        property_text = property_text + "@property (nonatomic) int "+ downkey +";\r\n"
       end
         
     end
