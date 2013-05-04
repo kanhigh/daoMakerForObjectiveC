@@ -146,9 +146,9 @@ EOS
 
     select_sql_text = select_sql_text + "\" "
 
-    select_sql_text = select_sql_text + "\r\n" + "    \"FROM \""+"\r\n"
+    select_sql_text = select_sql_text + "\r\n" + "    \" FROM \""+"\r\n"
     select_sql_text = select_sql_text + "    \""+@orginal_tablename+"\"\r\n"
-    select_sql_text = select_sql_text + "    \"ORDER BY \"\r\n"
+    select_sql_text = select_sql_text + "    \" ORDER BY \"\r\n"
     select_sql_text = select_sql_text + "    \""+order_column+"\""
 
     #make {select_to_dto}
